@@ -6,6 +6,7 @@ package serviceImplementation;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import model.Appointment;
 import model.Availability;
 import model.Clinique;
 import model.Doctor;
@@ -122,11 +123,53 @@ public class Implementor implements Service{
 	}
 
 	@Override
-	public boolean isDoctorAvailable(Availability newAppointment) {
+	public boolean isDoctorAvailable( Clinique myClinique , Appointment  newAppointRequest  ) {
 		// TODO Auto-generated method stub
 		
+		Doctor myDoc = searchDoctor( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
 		
+		if( myDoc != null  ){
+			
+			System.out.println(  " Checking availability for Dr. " + myDoc.getName()   );
+			
+			if( myDoc.getAvail().getDate().equalsIgnoreCase(newAppointRequest.getDate()) ){
+				
+				if( myDoc.getAvail().getStartTime().equalsIgnoreCase(  newAppointRequest.getFromTime()   )  && myDoc.getAvail().getEndTime().equalsIgnoreCase( newAppointRequest.getToTime() )  ){
+					
+					if( myDoc.getAvail().getBookingsMade() < 5  ){
+						
+						myClinique.getQueueOfAppointments().add( newAppointRequest );
+						
+						myDoc.getAvail().setBookingsMade( ( myDoc.getAvail().getBookingsMade() + 1 )  );
+						
+						
+						
+					}
+					
+				}
+				
+				else{
+					
+					System.out.println(  " Sorry Dr. "  + myDoc.getName() +  "  attends patients only from " +   myDoc.getAvail().getStartTime()  +    " till "  + myDoc.getAvail().getEndTime()  );
+									
+				}
+				
+				
+			}
+			
+			else{
+				
+				System.out.println( " Oops Dr. " + myDoc.getName() + " isn't available on  " + newAppointRequest.getDate() );
+				
+			}
+			
+		}
 		
+		else {
+			
+		System.out.println(  "Sorry ! Dr. " + newAppointRequest.getCurrentDoctor().getName() + " isn't available with us. "   );	
+			
+		}
 		
 		return false;
 	}

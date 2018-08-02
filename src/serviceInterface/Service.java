@@ -3,13 +3,14 @@
  */
 package serviceInterface;
 
+import model.Appointment;
 import model.Availability;
 import model.Clinique;
 import model.Doctor;
 import model.Patient;
 
 /**
- * @author bridgelabz
+ * @author brucewilliamwaynes
  *
  */
 public interface Service {
@@ -30,7 +31,7 @@ public interface Service {
 	public void fillPatientDetails( Patient myPatient );
 	public void fillAvailDetails( Doctor myDoctor );
 	public void fillSpecializationDetails( Doctor myDoctor );
-	public boolean isDoctorAvailable( Availability newAppointment   );
+	public boolean isDoctorAvailable( Clinique myClinique , Appointment newAppointRequest  );
 	public void makeAppointment( Clinique myClinique );
 	public void bestDoctor( Clinique myClinique );
 	public void bestSpecialization(Clinique myClinique );
