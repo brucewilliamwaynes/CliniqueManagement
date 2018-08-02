@@ -4,6 +4,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author brucewilliamwaynes
@@ -14,6 +15,7 @@ public class Clinique {
 	private String name;
 	private ArrayList<Doctor> doctorList;
 	private ArrayList<Patient> patientList;
+	private HashMap<String , Integer> specialList;
 	private ArrayList<Appointment> queueOfAppointments;
 	
 	public Clinique(){
@@ -21,6 +23,7 @@ public class Clinique {
 		this.name = "";
 		this.doctorList = new ArrayList<Doctor>();
 		this.patientList = new ArrayList<Patient>();
+		this.specialList = new HashMap<String,Integer>();
 		this.setQueueOfAppointments(new ArrayList<Appointment>());
 		
 	}
@@ -60,6 +63,20 @@ public class Clinique {
 	 */
 	public void setPatientList(ArrayList<Patient> patientList) {
 		this.patientList = patientList;
+	}
+
+	/**
+	 * @return the specialList
+	 */
+	public HashMap<String , Integer> getSpecialList() {
+		return specialList;
+	}
+
+	/**
+	 * @param specialList the specialList to set
+	 */
+	public void setSpecialList(HashMap<String , Integer> specialList) {
+		this.specialList = specialList;
 	}
 
 	/**

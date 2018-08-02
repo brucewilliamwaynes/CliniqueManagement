@@ -4,6 +4,7 @@
 package serviceImplementation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import model.Appointment;
@@ -128,51 +129,17 @@ public class Implementor implements Service{
 		
 		Doctor myDoc = searchDoctor( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
 		
-		if( myDoc != null  ){
+		myDoc.setTotalPoints(  myDoc.getTotalPoints() + 1  );
 			
-			System.out.println(  " Checking availability for Dr. " + myDoc.getName()   );
-			
-			if( myDoc.getAvail().getDate().equalsIgnoreCase(newAppointRequest.getDate()) ){
+		if( myDoc != null && myDoc.getAvail().getDate().equalsIgnoreCase(newAppointRequest.getDate()) &&  myDoc.getAvail().getStartTime().equalsIgnoreCase(  newAppointRequest.getFromTime()   )  && myDoc.getAvail().getEndTime().equalsIgnoreCase( newAppointRequest.getToTime() )  && myDoc.getAvail().getBookingsMade() < 5  ){
 				
-				if( myDoc.getAvail().getStartTime().equalsIgnoreCase(  newAppointRequest.getFromTime()   )  && myDoc.getAvail().getEndTime().equalsIgnoreCase( newAppointRequest.getToTime() )  ){
-					
-					if( myDoc.getAvail().getBookingsMade() < 5  ){
-						
-						myClinique.getQueueOfAppointments().add( newAppointRequest );
-						
-						myDoc.getAvail().setBookingsMade( ( myDoc.getAvail().getBookingsMade() + 1 )  );
-						
-						
-						
-					}
-					
-				}
-				
-				else{
-					
-					System.out.println(  " Sorry Dr. "  + myDoc.getName() +  "  attends patients only from " +   myDoc.getAvail().getStartTime()  +    " till "  + myDoc.getAvail().getEndTime()  );
-									
-				}
-				
+				return true;
 				
 			}
 			
-			else{
-				
-				System.out.println( " Oops Dr. " + myDoc.getName() + " isn't available on  " + newAppointRequest.getDate() );
-				
-			}
-			
-		}
-		
-		else {
-			
-		System.out.println(  "Sorry ! Dr. " + newAppointRequest.getCurrentDoctor().getName() + " isn't available with us. "   );	
-			
-		}
-		
 		return false;
-	}
+	
+}
 
 	@Override
 	public void viewCliniqueDetails(Clinique myClinique) {
@@ -408,20 +375,135 @@ public class Implementor implements Service{
 	}
 
 	@Override
-	public void makeAppointment(Clinique myClinique) {
+	public void makeAppointment(Clinique myClinique ,  Appointment newAppointRequest  ) {
 		// TODO Auto-generated method stub
+		
+		Doctor myDoc = searchDoctor( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
+		
+		if( myDoc != null  ){
+			
+			System.out.println(  " Checking availability for Dr. " + myDoc.getName()   );
+			
+			if( myDoc.getAvail().getDate().equalsIgnoreCase(newAppointRequest.getDate()) ){
+				
+				if( myDoc.getAvail().getStartTime().equalsIgnoreCase(  newAppointRequest.getFromTime()   )  && myDoc.getAvail().getEndTime().equalsIgnoreCase( newAppointRequest.getToTime() )  ){
+					
+					if( myDoc.getAvail().getBookingsMade() < 5  ){
+						
+						myClinique.getQueueOfAppointments().add( newAppointRequest );
+						
+						myDoc.getAvail().setBookingsMade( ( myDoc.getAvail().getBookingsMade() + 1 )  );
+						
+						System.out.println( " Appointment Successfull !" );
+						
+						myDoc.setTotalPoints(  myDoc.getTotalPoints() + 2   );
+						
+					}
+					
+					else {
+						
+						System.out.println( " Dr. "  + myDoc.getName() + "  is already rounded for the day ! Try another Doctor !  "  );
+						
+					}
+					
+					
+				}
+				
+				else{
+					
+					System.out.println(  " Sorry Dr. "  + myDoc.getName() +  "  attends patients only from " +   myDoc.getAvail().getStartTime()  +    " till "  + myDoc.getAvail().getEndTime()  );
+									
+				}
+				
+				
+			}
+			
+			else{
+				
+				System.out.println( " Oops Dr. " + myDoc.getName() + " isn't available on  " + newAppointRequest.getDate() );
+				
+			}
+			
+		}
+		
+		else {
+			
+		System.out.println(  "Sorry ! Dr. " + newAppointRequest.getCurrentDoctor().getName() + " isn't available with us. "   );	
+			
+		}
+		
 		
 	}
 
 	@Override
-	public void bestDoctor(Clinique myClinique) {
+	public Doctor bestDoctor(Clinique myClinique) {
 		// TODO Auto-generated method stub
+		 
+		int maxPoint = 0;
+		
+		Doctor bestDoc = null;
+		
+		for( Doctor eachDoc : myClinique.getDoctorList()  ){
+			
+			if(  maxPoint < eachDoc.getTotalPoints()   ){
+				
+				bestDoc = eachDoc;
+				
+				maxPoint = eachDoc.getTotalPoints();
+				
+			}
+			
+		}
+		
+		return bestDoc;
 		
 	}
 
 	@Override
-	public void bestSpecialization(Clinique myClinique) {
+	public Specialization bestSpecialization(Clinique myClinique) {
 		// TODO Auto-generated method stub
+		
+		Specialization currentSpec = null;
+		
+		int bestSpec = 0;
+		
+		for(  int  element = 0; element < myClinique.getSpecialList().size() ; element++ ){
+			
+			
+			
+		}
+	
+		return currentSpec;
+	
+	}
+
+	@Override
+	public void fillUpSpecializationList(Clinique myClinique) {
+		// TODO Auto-generated method stub
+		
+		HashMap< String, Integer > specialList = new HashMap< String , Integer  >();
+		
+		int frequency = 0;
+		
+		for( Doctor eachDoc : myClinique.getDoctorList() ){
+			
+			if( specialList.containsKey( eachDoc.getSpecial().getAreaOfSpecialization() ) ){
+			
+				frequency = specialList.get(eachDoc.getSpecial().getAreaOfSpecialization())  + 1;
+			
+			}
+			
+			else{
+				
+				frequency = 1;
+				
+			}
+			
+			specialList.put(  eachDoc.getSpecial().getAreaOfSpecialization()  , frequency  );
+			
+		}
+		
+		myClinique.setSpecialList( specialList );
 		
 	}
 

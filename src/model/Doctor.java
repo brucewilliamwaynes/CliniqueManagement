@@ -11,12 +11,14 @@ public class Doctor {
 
 	private String name;
 	private String id;
+	private int totalPoints;
 	private Specialization special;
 	private Availability avail;
 	
 	public Doctor(){
 		this.name = "";
 		this.id = "";
+		this.totalPoints = 0;
 		this.special = new Specialization();
 		this.avail = new Availability();
 		
@@ -70,6 +72,22 @@ public class Doctor {
 	 */
 	public void setAvail(Availability avail) {
 		this.avail = avail;
+	}
+
+
+	/**
+	 * @return the totalPoints
+	 */
+	public int getTotalPoints() {
+		return totalPoints;
+	}
+
+
+	/**
+	 * @param totalPoints the totalPoints to set
+	 */
+	public void setTotalPoints(int totalPoints) {
+		this.totalPoints = totalPoints;
 	}
 	
 	

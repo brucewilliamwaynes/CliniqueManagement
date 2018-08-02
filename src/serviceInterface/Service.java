@@ -8,11 +8,13 @@ import model.Availability;
 import model.Clinique;
 import model.Doctor;
 import model.Patient;
+import model.Specialization;
 
 /**
  * @author brucewilliamwaynes
  *
  */
+
 public interface Service {
 	
 	public void addDoctor( Clinique myClinique );
@@ -32,9 +34,10 @@ public interface Service {
 	public void fillAvailDetails( Doctor myDoctor );
 	public void fillSpecializationDetails( Doctor myDoctor );
 	public boolean isDoctorAvailable( Clinique myClinique , Appointment newAppointRequest  );
-	public void makeAppointment( Clinique myClinique );
-	public void bestDoctor( Clinique myClinique );
-	public void bestSpecialization(Clinique myClinique );
+	public void makeAppointment( Clinique myClinique , Appointment newAppointRequest );
+	public Doctor bestDoctor( Clinique myClinique );
+	public void fillUpSpecializationList( Clinique myClinique  );
+	public Specialization bestSpecialization(Clinique myClinique );
 	
 	
 }
