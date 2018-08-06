@@ -62,6 +62,8 @@ public class CliniqueController {
 				
 				elementClinic.setName(id);
 				
+				newService.fillSpecializationList(elementClinic);
+				
 				listOfClinics.add(elementClinic);
 				
 			}
@@ -80,11 +82,15 @@ public class CliniqueController {
 				
 				newService.fillCliniqueDetails(newClinique);
 				
+				newService.fillSpecializationList(newClinique);
+				
 				listOfClinics.add(newClinique);
+				
+				
 				
 			}
 		
-		
+			
 		}
 		
 		System.out.println( "Now that everything has been initialized , it's time to take con-troll !" );

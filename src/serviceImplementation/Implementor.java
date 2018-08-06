@@ -610,11 +610,11 @@ public class Implementor implements Service{
 		
 		String key = eachDoc.getSpecial().getAreaOfSpecialization();
 		
-		ArrayList< Doctor > keyList;
+		ArrayList< Doctor > keyList = null;
 		
 		if( specList.containsKey( key  )   ){
 			
-			keyList = myClinique.getSpecialList().get(key);
+			keyList = specList.get(key);
 			
 			keyList.add(eachDoc);
 			
@@ -834,7 +834,7 @@ public class Implementor implements Service{
 			
 			System.out.println(docList.size());
 			
-			if(docList.size() != 0){
+			if(docList != null){
 				
 				System.out.println( "Available Doctor(s) with " + name + " as specialization are : "   );
 				
