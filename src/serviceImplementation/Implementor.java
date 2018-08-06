@@ -459,53 +459,5 @@ public class Implementor implements Service{
 		
 	}
 
-	@Override
-	public Specialization bestSpecialization(Clinique myClinique) {
-		// TODO Auto-generated method stub
-		
-		Specialization currentSpec = null;
-		
-		int bestSpec = 0;
-		
-		for(  int  element = 0; element < myClinique.getSpecialList().size() ; element++ ){
-			
-			
-			
-		}
-	
-		return currentSpec;
-	
-	}
-
-	@Override
-	public void fillUpSpecializationList(Clinique myClinique) {
-		// TODO Auto-generated method stub
-		
-		HashMap< String, Integer > specialList = new HashMap< String , Integer  >();
-		
-		int frequency = 0;
-		
-		for( Doctor eachDoc : myClinique.getDoctorList() ){
-			
-			if( specialList.containsKey( eachDoc.getSpecial().getAreaOfSpecialization() ) ){
-			
-				frequency = specialList.get(eachDoc.getSpecial().getAreaOfSpecialization())  + 1;
-			
-			}
-			
-			else{
-				
-				frequency = 1;
-				
-			}
-			
-			specialList.put(  eachDoc.getSpecial().getAreaOfSpecialization()  , frequency  );
-			
-		}
-		
-		myClinique.setSpecialList( specialList );
-		
-	}
-
 
 }

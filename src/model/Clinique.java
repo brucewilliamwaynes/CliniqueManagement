@@ -15,7 +15,7 @@ public class Clinique {
 	private String name;
 	private ArrayList<Doctor> doctorList;
 	private ArrayList<Patient> patientList;
-	private HashMap<String , Integer> specialList;
+	private HashMap<String , ArrayList<Doctor>> specialList;
 	private ArrayList<Appointment> queueOfAppointments;
 	
 	public Clinique(){
@@ -23,7 +23,7 @@ public class Clinique {
 		this.name = "";
 		this.doctorList = new ArrayList<Doctor>();
 		this.patientList = new ArrayList<Patient>();
-		this.specialList = new HashMap<String,Integer>();
+		this.specialList = new HashMap<String , ArrayList<Doctor>>();
 		this.setQueueOfAppointments(new ArrayList<Appointment>());
 		
 	}
@@ -68,14 +68,14 @@ public class Clinique {
 	/**
 	 * @return the specialList
 	 */
-	public HashMap<String , Integer> getSpecialList() {
+	public HashMap<String , ArrayList<Doctor>> getSpecialList() {
 		return specialList;
 	}
 
 	/**
 	 * @param specialList the specialList to set
 	 */
-	public void setSpecialList(HashMap<String , Integer> specialList) {
+	public void setSpecialList(HashMap<String , ArrayList<Doctor>> specialList) {
 		this.specialList = specialList;
 	}
 

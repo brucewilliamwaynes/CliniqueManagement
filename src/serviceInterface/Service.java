@@ -36,8 +36,5 @@ public interface Service {
 	public boolean isDoctorAvailable( Clinique myClinique , Appointment newAppointRequest  );
 	public void makeAppointment( Clinique myClinique , Appointment newAppointRequest );
 	public Doctor bestDoctor( Clinique myClinique );
-	public void fillUpSpecializationList( Clinique myClinique  );
-	public Specialization bestSpecialization(Clinique myClinique );
-	
 	
 }
