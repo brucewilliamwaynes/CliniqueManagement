@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import org.json.simple.JSONObject;
+
 import model.Appointment;
 import model.Availability;
 import model.Clinique;
@@ -14,6 +16,7 @@ import model.Doctor;
 import model.Patient;
 import model.Specialization;
 import serviceInterface.Service;
+import utility.FileHandlingClass;
 
 /**
  * @author brucewilliamwaynes
@@ -61,7 +64,7 @@ public class Implementor implements Service{
 	}
 
 	@Override
-	public Doctor searchDoctor(Clinique myClinique , String name) {
+	public Doctor searchDoctorByName(Clinique myClinique , String name) {
 		// TODO Auto-generated method stub
 		
 		for(Doctor eachDoc : myClinique.getDoctorList()){
@@ -78,7 +81,7 @@ public class Implementor implements Service{
 	}
 
 	@Override
-	public Patient searchPatient(Clinique myClinique, String name) {
+	public Patient searchPatientByName(Clinique myClinique, String name) {
 		// TODO Auto-generated method stub
 		
 		for(Patient eachPat : myClinique.getPatientList()){
@@ -127,7 +130,7 @@ public class Implementor implements Service{
 	public boolean isDoctorAvailable( Clinique myClinique , Appointment  newAppointRequest  ) {
 		// TODO Auto-generated method stub
 		
-		Doctor myDoc = searchDoctor( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
+		Doctor myDoc = searchDoctorByName( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
 		
 		myDoc.setTotalPoints(  myDoc.getTotalPoints() + 1  );
 			
@@ -378,7 +381,7 @@ public class Implementor implements Service{
 	public void makeAppointment(Clinique myClinique ,  Appointment newAppointRequest  ) {
 		// TODO Auto-generated method stub
 		
-		Doctor myDoc = searchDoctor( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
+		Doctor myDoc = searchDoctorByName( myClinique ,  newAppointRequest.getCurrentDoctor().getName()  );
 		
 		if( myDoc != null  ){
 			
@@ -456,6 +459,507 @@ public class Implementor implements Service{
 		}
 		
 		return bestDoc;
+		
+	}
+
+	@Override
+	public Doctor searchDoctorByID(Clinique myClinique, String id) {
+		// TODO Auto-generated method stub
+		
+		for( Doctor eachDoc : myClinique.getDoctorList()  ){
+			
+			if(  eachDoc.getId().equalsIgnoreCase(id)   )
+				
+				return eachDoc;
+			
+		}
+		
+		return null;
+		
+	}
+
+	@Override
+	public ArrayList<Doctor> searchDoctorBySpecialization(Clinique myClinique, String name) {
+		// TODO Auto-generated method stub
+		
+		if(  myClinique.getSpecialList().containsKey(name)   ){
+			
+			System.out.println( "YES FOUND!"  );
+			
+			ArrayList<Doctor> docList = myClinique.getSpecialList().get(name);
+			
+			return docList;
+			
+		}
+		
+		return null;
+	
+	}
+
+	@Override
+	public ArrayList<Doctor> searchDoctorByAvailability(Clinique myClinique, Appointment appointRequest) {
+		// TODO Auto-generated method stub
+		
+		ArrayList<Doctor> doctorList = new ArrayList<Doctor>();
+		
+		for( Doctor eachDoctor : myClinique.getDoctorList()  ){
+			
+			if(  eachDoctor.getAvail().getDate().equalsIgnoreCase(appointRequest.getDate())  && eachDoctor.getAvail().getStartTime().equalsIgnoreCase(appointRequest.getFromTime()) && eachDoctor.getAvail().getEndTime().equals(appointRequest.getToTime()) )
+			
+				doctorList.add(eachDoctor);
+		
+		}
+		
+		
+		return doctorList;
+		
+	}
+
+	@Override
+	public Patient searchPatientByID(Clinique myClinique, String id) {
+		// TODO Auto-generated method stub
+	
+		for( Patient eachPatient : myClinique.getPatientList() ){
+			
+			if( eachPatient.getId().equalsIgnoreCase(id)  )
+				
+				return eachPatient;
+			
+		}
+		
+		return null;
+	
+	}
+
+	@Override
+	public Patient searchPatientByMobileNumber(Clinique myClinique, String phoneNumber) {
+		// TODO Auto-generated method stub
+		
+		for ( Patient eachPatient : myClinique.getPatientList()  ){
+			
+			if(eachPatient.getPhoneNumber().equalsIgnoreCase(phoneNumber))
+				
+				return eachPatient;
+			
+		}
+		
+		return null;
+	
+	}
+
+	@Override
+	public String bestSpecialization(Clinique myClinique) {
+		// TODO Auto-generated method stub
+		
+		double maxRating = 0.0;
+		double currentRating = 0.0;
+		String bestSpec = "";
+		
+		for ( String element :  myClinique.getSpecialList().keySet()  ){
+			
+			currentRating = 0.0;
+			
+			for( Doctor eachDoc : myClinique.getSpecialList().get(element) ){
+				
+				currentRating += eachDoc.getSpecial().getRating();
+				
+			}
+			
+			currentRating /= myClinique.getSpecialList().get(element).size();
+			
+			if( currentRating > maxRating ){
+				
+				maxRating = currentRating;
+				
+				bestSpec = element;
+				
+			}
+			
+		}
+		
+		
+		return bestSpec;
+	
+	}
+
+	@Override
+	public void viewSpecilizationList(Clinique myClinique) {
+		// TODO Auto-generated method stub
+		
+		for( String element : myClinique.getSpecialList().keySet()  ){
+			
+			System.out.println(  " Specialization : " + element  );
+			
+			for( Doctor eachDoc : myClinique.getSpecialList().get(element)){
+				
+				System.out.print( "  Dr.  "  + eachDoc.getName() + "   \n" );
+				
+			}
+			
+		}
+		
+	}
+
+	@Override
+	public void fillSpecializationList(Clinique myClinique) {
+		// TODO Auto-generated method stub
+		
+		HashMap< String , ArrayList< Doctor > > specList = new HashMap< String, ArrayList< Doctor >>();
+ 		
+	for( Doctor eachDoc : myClinique.getDoctorList()   ){
+		
+		String key = eachDoc.getSpecial().getAreaOfSpecialization();
+		
+		ArrayList< Doctor > keyList;
+		
+		if( specList.containsKey( key  )   ){
+			
+			keyList = myClinique.getSpecialList().get(key);
+			
+			keyList.add(eachDoc);
+			
+		}
+		
+		else{
+			
+			keyList = new ArrayList< Doctor >();
+			
+			keyList.add(eachDoc);
+			
+		}
+		
+		specList.put( key , keyList );
+		
+	}
+	
+	myClinique.setSpecialList(specList);
+	
+	}
+
+	@Override
+	public void fillCliniqueFromJSON() throws Exception {
+		// TODO Auto-generated method stub
+		
+		Clinique myClinique = new Clinique();
+		
+		System.out.println(  " Reading Doctor Details First ! "  );
+		
+		fillDoctorDetailsFromJSON( myClinique );
+		
+		System.out.println(  " Reading Patient Details!"  );
+		
+		fillPatientDetailsFromJSON( myClinique  );
+		
+	}
+
+	@Override
+	public void fillDoctorDetailsFromJSON( Clinique myClinique ) throws Exception {
+		// TODO Auto-generated method stub
+		
+		JSONObject docJSON = FileHandlingClass.readJSONFromFile();
+		
+		ArrayList<Doctor> docList = new ArrayList<Doctor>();
+		
+		for( Object key : docJSON.keySet()){
+			
+			JSONObject docObj = (JSONObject)docJSON.get(key);
+			
+			Doctor newDoc = new Doctor();
+			
+			newDoc.setName((String) docObj.get("Name"));
+			
+			newDoc.setId((String) docObj.get("ID"));
+			
+			newDoc.setTotalPoints((int) docObj.get("TotalPoints"));
+			
+			fillAvailDetailsFromJSON( docJSON , newDoc    );
+			
+			fillSpecialDetailsFromJSON( docJSON , newDoc   );
+			
+			docList.add(newDoc);
+			
+		}
+		
+		myClinique.setDoctorList(docList);		
+		
+	}
+
+	@Override
+	public void fillPatientDetailsFromJSON( Clinique myClinique) throws Exception {
+		// TODO Auto-generated method stub
+		
+		JSONObject patJSON = FileHandlingClass.readJSONFromFile();
+		
+		ArrayList<Patient > patList = new ArrayList<Patient>();
+		
+		for ( Object key : patJSON.keySet() ){
+			
+			JSONObject patObj = (JSONObject)patJSON.get(key);
+			
+			Patient newPat = new Patient();
+			
+			newPat.setName((String) patObj.get("Name"));
+			
+			newPat.setId((String) patObj.get("ID"));
+			
+			newPat.setPhoneNumber((String) patObj.get("PhoneNumber"));
+			
+			newPat.setAge((String) patObj.get("Age"));
+			
+			patList.add(newPat);
+			
+		}
+		
+		myClinique.setPatientList(patList);
+		
+	}
+
+	@Override
+	public void fillAvailDetailsFromJSON(JSONObject docJSON , Doctor newDoc) {
+		// TODO Auto-generated method stub
+		
+		Availability newAvail = new Availability();
+		
+		newAvail.setDate((String) docJSON.get(   "Date"    ));
+		
+		newAvail.setStartTime((String) docJSON.get( "StartTime" ));
+		
+		newAvail.setEndTime((String) docJSON.get( "EndTime" ));
+		
+		newAvail.setBookingsMade((int) docJSON.get( "Bookings" ));
+		
+		newDoc.setAvail(newAvail);
+		
+	}
+
+	@Override
+	public void fillSpecialDetailsFromJSON(JSONObject docJSON , Doctor newDoc  ) {
+		// TODO Auto-generated method stub
+		
+		Specialization newSpec = new Specialization();
+		
+		newSpec.setAreaOfSpecialization((String) docJSON.get("AOS"));
+		
+		newSpec.setRating((double) docJSON.get("Rating"));
+		
+		newDoc.setSpecial(newSpec);
+		
+	}
+
+	@Override
+	public Clinique searchClinique(ArrayList<Clinique> clinicList, String name) {
+		// TODO Auto-generated method stub
+		for(Clinique eachClinic : clinicList){
+			
+			if( eachClinic.getName().equalsIgnoreCase(name))
+				
+				return eachClinic;
+			
+		}
+		
+		
+		return null;
+		
+	}
+
+	@Override
+	public void scheduleAppointment(Clinique myClinique) {
+		// TODO Auto-generated method stub
+		
+		Scanner sc = new Scanner( System.in  );
+		
+		Appointment newAppointRequest = new Appointment();
+		
+		System.out.println( "Scheduling Appointment ! Process is starting !"  );
+		
+		System.out.println(  "Enter your name");
+		
+		String name = sc.nextLine();
+		
+		Patient newPat = this.searchPatientByName(myClinique, name);
+		
+		if( newPat != null ){
+			
+			newAppointRequest.setCurrentPatient(newPat);
+			
+		}
+		
+		else{
+			
+			newPat = new Patient();
+			
+			this.fillPatientDetails(newPat);
+			
+			myClinique.getPatientList().add(newPat);
+			
+		}
+		
+		String option = "";
+		
+		do {
+		
+		System.out.println( " Search Doctors , 1 for name , 2 for specialization , 3 for availability , 4 for id , 0 to Exit !  "  );
+		
+		option = sc.nextLine();
+		
+		if(option.equalsIgnoreCase("1")){
+			
+			System.out.println( "Enter Dr. name to be searched"  );
+			
+			name = sc.nextLine();
+			
+			Doctor doc = this.searchDoctorByName( myClinique, name);
+			
+			if(doc != null){
+							
+				this.viewDoctorDetails(doc);
+				
+			}
+			
+			else {
+				
+				System.out.println( "Dr. with name " + name + " not found! "   );
+				
+			}
+			
+		}
+		
+		else if ( option.equalsIgnoreCase("2") ) {
+			
+			System.out.println( "Enter Specialization to be searched"  );
+			
+			name = sc.nextLine();
+			
+			ArrayList<Doctor> docList = this.searchDoctorBySpecialization( myClinique , name);
+			
+			System.out.println(docList.size());
+			
+			if(docList.size() != 0){
+				
+				System.out.println( "Available Doctor(s) with " + name + " as specialization are : "   );
+				
+				for( Doctor eachDoc : docList){
+					
+					this.viewDoctorDetails(eachDoc);
+					
+				}
+				
+			}
+			
+			else {
+				
+				System.out.println(  "Dr. with " + name + "  specialization isn't present in " + myClinique.getName() + " Clinic." );
+				
+			}
+			
+		}
+		
+		else if ( option.equalsIgnoreCase("3") ) {
+			
+			System.out.println( "Enter Date, Start Time and EndTime  to be searched"  );
+			
+			String date = sc.nextLine();
+			
+			String startTime = sc.nextLine();
+			
+			String endTime = sc.nextLine();
+			
+			Appointment newRequest = new Appointment();
+			
+			newRequest.setDate(date);
+			
+			newRequest.setFromTime(startTime);
+			
+			newRequest.setToTime(endTime);
+			
+			ArrayList<Doctor> docList = this.searchDoctorByAvailability( myClinique, newRequest );
+			
+			if(docList.size() != 0){
+				
+				System.out.println( "Available Doctor(s) on " + date + " between " +  startTime + "  and "  + endTime + " are :"     );
+				
+				for( Doctor eachDoc : docList){
+					
+					this.viewDoctorDetails(eachDoc);
+					
+				}
+				
+			}
+			
+			else {
+				
+				System.out.println(  "No available Doctor(s) on " + date + " between " +  startTime + "  and "  + endTime + " in " + myClinique.getName() + " Clinic." );
+				
+			}
+			
+		}
+		
+		else if(  option.equalsIgnoreCase("4" )   ){
+			
+			name = "";
+			
+			do{
+				System.out.println( "Enter Dr. ID(3-digit) to be searched"  );
+			
+				name = sc.nextLine();
+			
+			}while(name.length()!= 3);
+			
+			Doctor doc = this.searchDoctorByID( myClinique, name);
+			
+			if(doc != null){
+				
+				this.viewDoctorDetails(doc);
+				
+			}
+			
+			else {
+				
+				System.out.println( "Dr. with name " + name + " not found! "   );
+				
+			}
+			
+		}
+		
+		}while(!option.equals("0"));
+		
+		System.out.println( "I hope I was able to provide you with Information!"  );
+		
+		System.out.println( "Enter Doctor name you want to book appointment with :"  );
+		
+		name = sc.nextLine();
+		
+		Doctor currentDoc = this.searchDoctorByName(myClinique, name);
+		
+		newAppointRequest.setCurrentDoctor(currentDoc);
+		
+		System.out.println( "Enter date and time of availability !"   );
+		
+		String date = sc.nextLine();
+		
+		String startTime = sc.nextLine();
+		
+		String endTime = sc.nextLine();
+		
+		newAppointRequest.setDate(date);
+		
+		newAppointRequest.setFromTime(startTime);
+		
+		newAppointRequest.setToTime(endTime);
+		
+		if( this.isDoctorAvailable(myClinique, newAppointRequest)   ){
+			
+			System.out.println( "Appointment  Successful !"   );
+			
+			myClinique.getQueueOfAppointments().add(newAppointRequest);
+			
+		}
+		
+		else{
+			
+			System.out.println(  "Appointment Failed !! Sorry !"   );
+			
+		}
 		
 	}
 
